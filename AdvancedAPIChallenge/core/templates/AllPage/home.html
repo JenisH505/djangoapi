@@ -1,0 +1,71 @@
+ <h1>User Profile Page</h1>
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+* {
+  box-sizing: border-box;
+}
+  div.horizontal a {
+  display: block;
+  width: 100px;
+  }
+  li.last
+  {
+  float:right !important;
+  }
+/* Add a gray background color with some padding */
+body {
+  font-family: Arial;
+  padding: 20px;
+  background: #979797;
+}
+
+/* Header/Blog Title */
+.header {
+  padding: 30px;
+  font-size: 40px;
+  text-align: center;
+  background: #696969 ;
+}
+
+/* Create two unequal columns that floats next to each other */
+/* Left column */
+.leftcolumn {   
+  float: left;
+  width: 75%;
+}
+.log {
+  font-size: 40px;
+  text-align: top;
+  background: #696969 ;
+}
+
+
+</style>
+</head>
+<body>
+  <div class="horizontal">
+       <a href="{% url 'core:login' %}" class="last">Logout</a>
+    </ul>
+  </div>
+<div class="header">
+  <ul>
+    <p style="color: black"> This is {{ user.username }} Profile.</p>
+  </ul>
+</div>
+
+<div class="row">
+  <div class="leftcolumn">
+    <div class="card">
+      <h2></h2>
+    </div>
+  </div>
+</div>
+
+
+</div>
+</body>
+</html>

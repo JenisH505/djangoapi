@@ -1,0 +1,20 @@
+components are the function which first latter are capital
+- The main difference the function and the component is in function call 
+
+# rafce
+
+/*
+
+Backend 
+    node (library)
+        express (framework)
+
+Frontend
+    react (library)
+        next (framework)
+s
+*/
+
+Day 3
+- if props is other than string user curly braces
+- html pros like (ClassName, src, style, href) does not support in custom tag (Component)
