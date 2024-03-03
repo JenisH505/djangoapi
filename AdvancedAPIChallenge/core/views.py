@@ -101,6 +101,8 @@ def login(request):
         return Response({'message': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
+@csrf_exempt
+@permission_classes([])
 def logout(request):
     auth_logout(request)
     request.session.flush()
