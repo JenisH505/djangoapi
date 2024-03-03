@@ -175,4 +175,145 @@ Views act as the intermediary between the models and the templates, handling the
 
 # 7 Def Update fun
 - This Update function is view function which handles the updating functionality of people listed in database with the help of provided id. 
-- This is
+
+
+# 1 API for Adding User
+- This view handles a POST request to add a new user to the database. It expects the username, email, and password fields to be provided in the request data. If any of these fields are missing, an error response is returned. Otherwise, a new People instance is created with the provided data, saved to the database, and a success response is returned.
+
+@permission_classes([])
+class AddUser(APIView):
+    def post(self, request):
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        pop = People(
+            username = username,
+            email = email,
+            password = password,
+        )
+        pop.save()
+        if not (username and email and password):
+            return Response({'error': 'Please provide username, email, and password.'})
+        pop = People.objects.all()
+        
+        # return redirect('home')
+        return Response({'message': 'User added successfully.'})
+@permission_classes([]): This decorator is used to specify the permission classes for the view.
+
+- username = request.POST.get('username'): Retrieves the value of the username field from the POST request data.
+- email = request.POST.get('email'): Retrieves the value of the email field from the POST request data.
+- password = request.POST.get('password'): Retrieves the value of the password field from the POST request data.
+pop = People(username=username, email=email, password=password): Creates a new instance of the People model with the retrieved username, email, and password values.
+pop.save(): Saves the newly created People instance to the database.
+
+# The testing for Add user
+<img width="1060" alt="Screenshot 2024-03-03 at 10 04 14 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/d52d2214-f7aa-4945-8804-5ae189123558">
+
+# 2 API for Updating User
+-  This view handles a PUT request to update a People object in the database. It expects the email field to be provided in the request data to identify the person to update. If the person is found, the view updates the person's data using the provided serializer data. If the serializer data is valid, the updated data is saved, and a success response is returned. If the serializer data is invalid, an error response is returned.
+
+@permission_classes([])
+class UpdatePeople(APIView):
+    def put(self, request):
+        email = request.data.get('email')
+        
+        try: 
+            person = People.objects.get(email=email)  
+        except People.DoesNotExist:
+            return Response({'error': 'Person not found'})
+       
+        serializer = PeopleSerializer(person, data=request.data, partial=True) 
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+              
+        return Response(serializer.errors)
+    
+-  @permission_classes([]): This decorator is used to specify the permission classes for the view.
+-  in the put method the
+    - email = request.data.get('email'): Retrieves the value of the email field from the request data.
+- People.objects.get(email=email).
+    If a People object with the specified email is found, it is assigned to the person variable.
+    If no People object is found with the specified email, it raises a People.DoesNotExist exception.
+- if a People object is found, the code proceeds to the next step.
+- serializer = PeopleSerializer(person, data=request.data, partial=True): Creates an instance of the PeopleSerializer serializer, passing the person object and the updated data from the request. The partial=True argument allows for partial updates, meaning that not all fields need to be provided in the request data.
+
+# The testing for Updating user
+<img width="1060" alt="Screenshot 2024-03-03 at 10 19 06 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/b037f6ce-2871-449a-ac16-67bb055aa5b3">
+- This image shows that the given user with that email is not found cause with that email no user is stored.
+
+# update testing image 2
+<img width="1060" alt="Screenshot 2024-03-03 at 10 21 08 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/5379ec4d-34be-40a8-8c63-2ea7fc9e9967">
+- The user details with the email stored 
+
+# update testing image 3
+<img width="1060" alt="Screenshot 2024-03-03 at 10 23 08 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/fc6394f6-3d30-42a7-9ac1-2f5ea34428a3">
+- In this image the username is update 
+
+# API 3 Signup 
+- This view handles a POST request to create a new user account. It expects the user data to be provided in the request data, which is then passed to the CreateUserForm form for validation and saving. If the form data is valid, a new user account is created, and a success response with a thank you message is returned. If the form data is invalid, an error response with the form errors is returned.
+- code
+class SignUpAPIView(APIView):
+    authentication_classes = []
+    permission_classes = []
+    def post(self, request):
+        form = CreateUserForm(request.data)
+
+        if form.is_valid():
+            form.save()
+            return Response({'message': 'Account created successfully. Thank you for signing up!'})
+        return Response(form.errors)
+
+- class SignUpAPIView(APIView):: This line defines the SignUpAPIView class, which inherits from APIView. It indicates that this view will     handle API requests.
+    - authentication_classes = []: This line sets the authentication_classes attribute of the view to an empty list []. It specifies that         no authentication classes are required for this view, meaning that authentication is not enforced.
+    - permission_classes = []: This line sets the permission_classes attribute of the view to an empty list []. It specifies that no              permission classes are required for this view, meaning that no specific permissions are enforced.
+- def post(self, request):: This method defines the logic for handling POST requests to the view. It takes the request object as a            parameter.
+Inside the post method:
+    - form = CreateUserForm(request.data): Creates an instance of the CreateUserForm form using the data from the request. The                    CreateUserForm is assumed to be a form class that handles user creation.
+    - if form.is_valid():: Checks if the form data is valid according to the form's validation rules.
+        - form.save(): Saves the form data, which presumably creates a new user account based on the form data.
+        - return Response({'message': 'Account created successfully. Thank you for signing up!'}): Returns a Response object with a success           message indicating that the account was created successfully, along with a thank you message for signing up.
+    - return Response(form.errors): If the form data is invalid, it returns a Response object with the form errors.
+
+ # The testing for Signup API
+ <img width="1060" alt="Screenshot 2024-03-03 at 10 36 59 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/066473df-8620-49ed-b8ca-72abc8a6a90f">
+ - In this image the username sandy has been signup.
+
+ # API 4 Login 
+ - This view handles user authentication and login. It expects the username and password to be provided in the request data. If the authentication is successful, the user is logged in, a new session is created, and a success response with the session ID is returned. If the authentication fails, an error response with an appropriate message and status code is returned.
+
+@permission_classes([])
+def login(request):
+    if request.method == 'POST':
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+    if not (username):
+        return Response({'error': 'Username is required'})
+
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+        auth_login(request, user)
+        # login(request, user)
+        request.session.create()
+        return Response({'message': 'Login successful', 'session_id': request.session.session_key})
+        # return Response({'message': 'Login successful'})
+    else:
+        return Response({'message': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+
+- @permission_classes([]): This decorator is used to specify the permission classes for the view.
+- if request.method == 'POST':: Checks if the request method is POST. This ensures that the login logic is only executed for POST requests.
+    - username = request.data.get('username'): Retrieves the value of the username field from the request data.
+    - password = request.data.get('password'): Retrieves the value of the password field from the request data.
+- if not (username):: Checks if the username is missing or empty.
+- user = authenticate(request, username=username, password=password): Authenticates the user using the provided username and password.
+    - if user is not None
+    - auth_login(request, user)
+    - request.session.create() - Creates a new session for the user
+    - return Response({'message': 'Login successful', 'session_id': request.session.session_key})
+
+# The Testing for Login API
+<img width="1060" alt="Screenshot 2024-03-03 at 10 44 16 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/25f5c859-9811-41c5-af52-06312b7b2d57">
+- IN this image the recently signup user sandy is logged in with his sessino id.
+
