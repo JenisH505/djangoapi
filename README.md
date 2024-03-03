@@ -175,3 +175,4 @@ Views act as the intermediary between the models and the templates, handling the
 
 # 7 Def Update fun
 - This Update function is view function which handles the updating functionality of people listed in database with the help of provided id. 
+- This is
