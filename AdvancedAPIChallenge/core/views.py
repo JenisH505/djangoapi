@@ -61,9 +61,7 @@ class SignUpAPIView(APIView):
 
         if form.is_valid():
             form.save()
-            messages.success(request, 'Account created')
-            # return redirect('core:login')  # Assuming you have a URL named 'core:login'
-        
+            return Response({'message': 'Account created successfully. Thank you for signing up!'})
         return Response(form.errors)
     
 @csrf_protect
@@ -165,6 +163,7 @@ def add(request):
         return redirect('home')
     return render (request, 'core.html')
 
+@permission_classes([])
 class AddUser(APIView):
     def post(self, request):
         username = request.POST.get('username')
@@ -210,7 +209,7 @@ def update(request, id):
         pop.save()
         return redirect('home')
     return redirect(request, 'core.html')
-
+@permission_classes([])
 class UpdatePeople(APIView):
     def put(self, request):
         email = request.data.get('email')
