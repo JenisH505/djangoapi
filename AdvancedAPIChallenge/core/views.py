@@ -20,10 +20,10 @@ from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 
 
-class PeopleViewSet(viewsets.ModelViewSet):
+class PeopleViewSet(viewsets.ModelViewSet): # Viewset for viewing and editing People instances
     queryset= People.objects.all()
     serializer_class=PeopleSerializer
     authentication_classes = [TokenAuthentication]
@@ -54,6 +54,8 @@ def signUpPage(request):
     return render(request, 'AllPage/signUp.html', context)
 
 class SignUpAPIView(APIView):
+    authentication_classes = []
+    permission_classes = []
     def post(self, request):
         form = CreateUserForm(request.data)
 
@@ -81,6 +83,7 @@ def loginPage(request):
     return render(request, "AllPage/login.html", context)
 
 @api_view(['POST'])
+@permission_classes([])
 def login(request):
     if request.method == 'POST':
         username = request.data.get('username')
