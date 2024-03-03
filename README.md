@@ -177,7 +177,7 @@ Views act as the intermediary between the models and the templates, handling the
 - This Update function is view function which handles the updating functionality of people listed in database with the help of provided id. 
 
 
-# API for Adding User
+# 1 API for Adding User
 - This view handles a POST request to add a new user to the database. It expects the username, email, and password fields to be provided in the request data. If any of these fields are missing, an error response is returned. Otherwise, a new People instance is created with the provided data, saved to the database, and a success response is returned.
 
 @permission_classes([])
@@ -209,3 +209,47 @@ pop.save(): Saves the newly created People instance to the database.
 
 # The testing for Add user
 <img width="1060" alt="Screenshot 2024-03-03 at 10 04 14 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/d52d2214-f7aa-4945-8804-5ae189123558">
+
+# 2 API for Updating User
+-  This view handles a PUT request to update a People object in the database. It expects the email field to be provided in the request data to identify the person to update. If the person is found, the view updates the person's data using the provided serializer data. If the serializer data is valid, the updated data is saved, and a success response is returned. If the serializer data is invalid, an error response is returned.
+
+@permission_classes([])
+class UpdatePeople(APIView):
+    def put(self, request):
+        email = request.data.get('email')
+        
+        try: 
+            person = People.objects.get(email=email)  
+        except People.DoesNotExist:
+            return Response({'error': 'Person not found'})
+       
+        serializer = PeopleSerializer(person, data=request.data, partial=True) 
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+              
+        return Response(serializer.errors)
+    
+-  @permission_classes([]): This decorator is used to specify the permission classes for the view.
+-  in the put method the
+    - email = request.data.get('email'): Retrieves the value of the email field from the request data.
+- People.objects.get(email=email).
+    If a People object with the specified email is found, it is assigned to the person variable.
+    If no People object is found with the specified email, it raises a People.DoesNotExist exception.
+- if a People object is found, the code proceeds to the next step.
+- serializer = PeopleSerializer(person, data=request.data, partial=True): Creates an instance of the PeopleSerializer serializer, passing the person object and the updated data from the request. The partial=True argument allows for partial updates, meaning that not all fields need to be provided in the request data.
+
+# The testing for Updating user
+<img width="1060" alt="Screenshot 2024-03-03 at 10 19 06 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/b037f6ce-2871-449a-ac16-67bb055aa5b3">
+- This image shows that the given user with that email is not found cause with that email no user is stored.
+
+# update testing image 2
+<img width="1060" alt="Screenshot 2024-03-03 at 10 21 08 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/5379ec4d-34be-40a8-8c63-2ea7fc9e9967">
+- The user details with the email stored 
+
+# update testing image 3
+<img width="1060" alt="Screenshot 2024-03-03 at 10 23 08 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/fc6394f6-3d30-42a7-9ac1-2f5ea34428a3">
+- In this image the username is update 
+
+# API 3 Signup 
+- 
