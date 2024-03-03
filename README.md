@@ -338,4 +338,4 @@ def logout(request):
 
 # The Testing for Logout API
 <img width="1060" alt="Screenshot 2024-03-03 at 11 01 32 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/2a869cde-4a63-45b9-8da2-0ebc8459a7c0">
-- In this image the signup and login user is not logout
+- In this image the signup and login user is now logout
