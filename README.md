@@ -175,4 +175,37 @@ Views act as the intermediary between the models and the templates, handling the
 
 # 7 Def Update fun
 - This Update function is view function which handles the updating functionality of people listed in database with the help of provided id. 
-- This is
+
+
+# API for Adding User
+- This view handles a POST request to add a new user to the database. It expects the username, email, and password fields to be provided in the request data. If any of these fields are missing, an error response is returned. Otherwise, a new People instance is created with the provided data, saved to the database, and a success response is returned.
+
+@permission_classes([])
+class AddUser(APIView):
+    def post(self, request):
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        pop = People(
+            username = username,
+            email = email,
+            password = password,
+        )
+        pop.save()
+        if not (username and email and password):
+            return Response({'error': 'Please provide username, email, and password.'})
+        pop = People.objects.all()
+        
+        # return redirect('home')
+        return Response({'message': 'User added successfully.'})
+@permission_classes([]): This decorator is used to specify the permission classes for the view.
+
+- username = request.POST.get('username'): Retrieves the value of the username field from the POST request data.
+- email = request.POST.get('email'): Retrieves the value of the email field from the POST request data.
+- password = request.POST.get('password'): Retrieves the value of the password field from the POST request data.
+pop = People(username=username, email=email, password=password): Creates a new instance of the People model with the retrieved username, email, and password values.
+pop.save(): Saves the newly created People instance to the database.
+
+# The testing for Add user
+<img width="1060" alt="Screenshot 2024-03-03 at 10 04 14 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/d52d2214-f7aa-4945-8804-5ae189123558">
