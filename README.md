@@ -177,7 +177,7 @@ Views act as the intermediary between the models and the templates, handling the
 - This Update function is view function which handles the updating functionality of people listed in database with the help of provided id. 
 
 
-# 1 API for Adding User
+# 1. API for Adding User
 - This view handles a POST request to add a new user to the database. It expects the username, email, and password fields to be provided in the request data. If any of these fields are missing, an error response is returned. Otherwise, a new People instance is created with the provided data, saved to the database, and a success response is returned.
 
 @permission_classes([])
@@ -210,7 +210,7 @@ pop.save(): Saves the newly created People instance to the database.
 # The testing for Add user
 <img width="1060" alt="Screenshot 2024-03-03 at 10 04 14 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/d52d2214-f7aa-4945-8804-5ae189123558">
 
-# 2 API for Updating User
+# 2. API for Updating User
 -  This view handles a PUT request to update a People object in the database. It expects the email field to be provided in the request data to identify the person to update. If the person is found, the view updates the person's data using the provided serializer data. If the serializer data is valid, the updated data is saved, and a success response is returned. If the serializer data is invalid, an error response is returned.
 
 @permission_classes([])
@@ -251,7 +251,7 @@ class UpdatePeople(APIView):
 <img width="1060" alt="Screenshot 2024-03-03 at 10 23 08 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/fc6394f6-3d30-42a7-9ac1-2f5ea34428a3">
 - In this image the username is update 
 
-# API 3 Signup 
+# 3. API for Signup 
 - This view handles a POST request to create a new user account. It expects the user data to be provided in the request data, which is then passed to the CreateUserForm form for validation and saving. If the form data is valid, a new user account is created, and a success response with a thank you message is returned. If the form data is invalid, an error response with the form errors is returned.
 - code
 class SignUpAPIView(APIView):
@@ -280,7 +280,7 @@ Inside the post method:
  <img width="1060" alt="Screenshot 2024-03-03 at 10 36 59 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/066473df-8620-49ed-b8ca-72abc8a6a90f">
  - In this image the username sandy has been signup.
 
- # API 4 Login 
+ # 4. API for Login 
  - This view handles user authentication and login. It expects the username and password to be provided in the request data. If the authentication is successful, the user is logged in, a new session is created, and a success response with the session ID is returned. If the authentication fails, an error response with an appropriate message and status code is returned.
 
 @permission_classes([])
@@ -315,5 +315,27 @@ def login(request):
 
 # The Testing for Login API
 <img width="1060" alt="Screenshot 2024-03-03 at 10 44 16 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/25f5c859-9811-41c5-af52-06312b7b2d57">
-- IN this image the recently signup user sandy is logged in with his sessino id.
+- IN this image the recently signup user sandy is logged in with his session id.
 
+# 4. API for Logout
+- This view handles user logout. When a POST request is made to this view, it logs out the currently authenticated user using auth_logout, flushes the user's session data using request.session.flush(), and returns a success response with the message "Logout successful".
+code
+@api_view(['POST'])
+@csrf_exempt
+@permission_classes([])
+def logout(request):
+    auth_logout(request)
+    request.session.flush()
+    return Response({'message': 'Logout successful'})
+
+- @api_view(['POST']): This decorator is used to specify that the logout function is a Django REST framework view and that it accepts POST requests.
+- @csrf_exempt: This decorator is used to exempt the logout view from CSRF (Cross-Site Request Forgery) protection.
+- @permission_classes([]): This decorator is used to specify the permission classes for the view.
+- def logout(request)
+    - auth_logout(request): Logs out the currently authenticated user
+    - request.session.flush(): Deletes all data associated with the user's session.
+    - return Response({'message': 'Logout successful'})
+
+# The Testing for Logout API
+<img width="1060" alt="Screenshot 2024-03-03 at 11 01 32 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/2a869cde-4a63-45b9-8da2-0ebc8459a7c0">
+- In this image the signup and login user is not logout
