@@ -168,15 +168,15 @@ class UpdatePeople(APIView):
 - if a People object is found, the code proceeds to the next step.
 - serializer = PeopleSerializer(person, data=request.data, partial=True): Creates an instance of the PeopleSerializer serializer, passing the person object and the updated data from the request.
 
-## The testing for Updating user
+## - The testing for Updating user
 <img width="1060" alt="Screenshot 2024-03-03 at 10 19 06 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/b037f6ce-2871-449a-ac16-67bb055aa5b3">
 - This image shows that the given user with that email is not found cause with that email no user is stored.
 
-## update testing image 2
+## - Update testing image 2
 <img width="1060" alt="Screenshot 2024-03-03 at 10 21 08 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/5379ec4d-34be-40a8-8c63-2ea7fc9e9967">
 - The user details with the email stored 
 
-## update testing image 3
+## - Update testing image 3
 <img width="1060" alt="Screenshot 2024-03-03 at 10 23 08 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/fc6394f6-3d30-42a7-9ac1-2f5ea34428a3">
 - In this image the username is update 
 
@@ -198,7 +198,7 @@ class SignUpAPIView(APIView):
     - authentication_classes = []: This line sets the authentication_classes attribute of the view to an empty list []. It specifies that         no authentication classes are required for this view, meaning that authentication is not enforced.
     - permission_classes = []: This line sets the permission_classes attribute of the view to an empty list []. It specifies that no              permission classes are required for this view, meaning that no specific permissions are enforced.
 
- # The testing for Signup API
+ # - The testing for Signup API
  <img width="1060" alt="Screenshot 2024-03-03 at 10 36 59 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/066473df-8620-49ed-b8ca-72abc8a6a90f">
  - In this image the username sandy has been signup.
 
@@ -236,7 +236,7 @@ def login(request):
     - request.session.create() - Creates a new session for the user
     - return Response({'message': 'Login successful', 'session_id': request.session.session_key})
 
-## The Testing for Login API
+## - The Testing for Login API
 <img width="1060" alt="Screenshot 2024-03-03 at 10 44 16 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/25f5c859-9811-41c5-af52-06312b7b2d57">
 - IN this image the recently signup user sandy is logged in with his session id.
 
@@ -259,7 +259,7 @@ def logout(request):
     - request.session.flush(): Deletes all data associated with the user's session.
     - return Response({'message': 'Logout successful'})
 
-## The Testing for Logout API
+## - The Testing for Logout API
 <img width="1060" alt="Screenshot 2024-03-03 at 11 01 32 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/2a869cde-4a63-45b9-8da2-0ebc8459a7c0">
 - In this image the signup and login user is now logout
 
@@ -293,7 +293,7 @@ class CustomAuthToken(ObtainAuthToken):
         'email': The email of the authenticated user.
 - By using this CustomAuthToken view, when a client makes a POST request to the corresponding endpoint with valid credentials, they will receive a response containing the authentication token and the associated user's username and email.
 
-## The testing for Token
+## - The testing for Token
 <img width="1060" alt="Screenshot 2024-03-04 at 7 54 07 AM" src="https://github.com/JenisH505/djangoapi/assets/123802098/c99614b2-5304-4b38-af21-cce60150e9d6">
 - In this image the user token is provide.
 
