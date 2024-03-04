@@ -492,10 +492,12 @@ const handleChange = (e) => {
 - Called when input values change
 - Updates the formData state with the new input value
 
-# const axiosInstance = axios.create({
+# step 4
+const axiosInstance = axios.create({
   withCredentials: true,
 });
 - Creates Axios instance to make requests that can access cookies.
 
-# const csrftoken = Cookies.get('csrftoken');
+# step 5
+const csrftoken = Cookies.get('csrftoken');
 - get csrf token from cookies to include with request.
