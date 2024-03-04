@@ -79,7 +79,7 @@ Views act as the intermediary between the models and the templates, handling the
 
 # Project App 'core' views.py
 
-## 1 class PeopleViewSet
+## 1. class PeopleViewSet
 - This viewsets automatically provides 'list','create','retrieve','update', 'destroy' actions for the people model.
    Attributes:
         - queryset : The queryset of people objects to be used by the viewset.
@@ -87,9 +87,9 @@ Views act as the intermediary between the models and the templates, handling the
         - authentication : The authentication classes to be used for authenticating requests to the viewset. 
         - permission class : The permission classes to be used for determining access permissions to the viewset.
 
-## 2 Class PostViewSet
+## 2. Class PostViewSet
 - This code defines a view set for the Post model that provides CRUD operations. it uses PostSerializer to serialize and deserialize the model data and it includes a custom get_query set method that allows filtering the query set based on the author query parameters.
-## 3 The def Index
+## 3. The def Index
 - this index function is a view function that handles request sto a specific url. 
 
 - pop = People.objects.all() = this code retrieves all the objects from the People model using the 'all()' method and assign them to the variable 'pop'.
@@ -98,16 +98,16 @@ Views act as the intermediary between the models and the templates, handling the
 
 - return render(request, 'core.html', context) = This line renders the core.html template using the render function. It takes three arguments:
 
-## 4 In def add Function in core.views
+## 4. In def add Function in core.views
 - The add function handles the submission of a form to add a new People object to the database. if the request method is POST, it retrieves the form data, creates a new People object, saves it to the database, and redirects the user to the url 'home' and if the request method is GET it renders the core.html template
 
 #### The 'home' and 'core.html' is in templates/ALlPage
-## 5 Class AddUser class API
+## 5. Class AddUser class API
 - this AddUSer class API view handles adding a new user to the database. 
 - this AddUser API view handles  POST requests to add a new user to the database. It retrieves the required fields from the request, creates a new People object, saves it to the database, and returns a success response if all fields are provided. If any required field is missing, it returns an error response.
-### 6 Def edit
+### 6. Def edit
 - this function help to edit the People listed
-### 7 Def Update fun
+### 7. Def Update fun
 - This Update function is view function which handles the updating functionality of people listed in database with the help of provided id. 
 # 1. API for Adding User
 - This view handles a POST request to add a new user to the database. It expects the username, email, and password fields to be provided in the request data. If any of these fields are missing, an error response is returned. Otherwise, a new People instance is created with the provided data, saved to the database, and a success response is returned.
