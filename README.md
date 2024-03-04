@@ -461,4 +461,37 @@ code
     State variables are updated based on success or error scenarios.
     Page redirect is achieved via window.location.href.
 
+# 2. Login.jsx (src/pages/Login.jsx)
+- This is Login page. In this login Session_id is generated for the login users. As this is Session login too.
+- import React, { useState } from "react": Imports React, which contains React capabilities and APIs, and specifically the useState hook      which allows creating state in functional components.
+- import axios from 'axios': Imports the axios library which makes HTTP requests to external APIs/servers.
+- import { useNavigate } from 'react-router-dom': Imports the useNavigate hook from react-router-dom, which allows programmatically           navigating to different routes/pages.
+- import Cookies from 'js-cookie': Imports the js-cookie package which allows getting/setting browser cookies.
 
+* const Login = (props) => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    username: '',
+    password: ''
+  });
+
+- const navigate = useNavigate(); - uses the imported useNavigate hook to get access to the navigate function for navigating between routes.
+- const [formData, setFormData] = useState({username: '', password: ''}) - uses React's useState hook to initialize a state variable called   formData to an object with empty username and password strings. Also returns the setFormData function for updating the state.
+
+* const [errorMessage, setErrorMessage] = useState('')
+- Initializes a state variable errorMessage to track any login errors
+- Returns setErrorMessage function to update this state
+
+* const handleChange = (e) => {
+  const { name, value } = e.target  
+  setFormData({ ...formData, [name]: value })
+- Called when input values change
+- Updates the formData state with the new input value
+
+* const axiosInstance = axios.create({
+  withCredentials: true,
+});
+- Creates Axios instance to make requests that can access cookies.
+
+* const csrftoken = Cookies.get('csrftoken');
+- get csrf token from cookies to include with request.
