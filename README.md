@@ -320,7 +320,7 @@ def login(request):
 # 4. API for Logout
 - This view handles user logout. When a POST request is made to this view, it logs out the currently authenticated user using auth_logout, flushes the user's session data using request.session.flush(), and returns a success response with the message "Logout successful".
 code
-@api_view(['POST'])
+* @api_view(['POST'])
 @csrf_exempt
 @permission_classes([])
 def logout(request):
@@ -343,7 +343,7 @@ def logout(request):
 # 4. API for Token Generation
 - This custom authentication token view extends the default behavior of ObtainAuthToken by including additional user information (username and email) in the response along with the token.
 code
-class CustomAuthToken(ObtainAuthToken):
+* class CustomAuthToken(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data,
@@ -402,7 +402,7 @@ class CustomAuthToken(ObtainAuthToken):
 
 # 1. Signup.jsx (src/pages/signup.jsx)
 
-- const Signup = () => {
+* const Signup = () => {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -421,6 +421,34 @@ class CustomAuthToken(ObtainAuthToken):
     const { name, value } = e.target
     setFormData({ ...formData, [name]: value })
   };
-- const [successMessage, setSuccessMessage] = useState(''): This line declares a state variable named successMessage and a corresponding      function setSuccessMessage to update it.
-- const [errorMessage, setErrorMessage] = useState(''): Similarly, this line declares a state variable named errorMessage and a               corresponding function setErrorMessage to update it.
-- const handleChange = (e) => { ... }: This is the definition of the handleChange function, which is an event handler for form input          changes.
+    - const [successMessage, setSuccessMessage] = useState(''): This line declares a state variable named successMessage and a                    corresponding      function setSuccessMessage to update it.
+    - const [errorMessage, setErrorMessage] = useState(''): Similarly, this line declares a state variable named errorMessage and a               corresponding function setErrorMessage to update it.
+    - const handleChange = (e) => { ... }: This is the definition of the handleChange function, which is an event handler for form input          changes.
+
+  * const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/auth/api/signup/', formData)
+
+      setSuccessMessage('Account created successfully')
+      setErrorMessage('')
+      window.location.href = '/login'
+    } catch (error) {
+      console.error('Error:', error)
+      if (error.response) {
+        console.log('Response data:', error.response.data)
+        console.log('Response status:', error.response.status)
+        console.log('Response headers:', error.response.headers)
+      }
+      setErrorMessage(error.message)
+      setSuccessMessage('')
+    }
+
+- e.preventDefault(): Prevents the default form submission behavior of refreshing the page.
+- A try-catch block is used to handle errors:
+- Inside try:
+    - An async POST request is made using axios to the signup API endpoint, passing the formData state as the request body.
+    - If successful, the successMessage state is updated to 'Account created successfully' and errorMessage is cleared.
+    - The user is redirected to the /login page using window.location.href.
+
+
