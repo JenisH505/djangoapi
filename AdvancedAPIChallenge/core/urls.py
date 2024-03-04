@@ -7,7 +7,7 @@ from .views import index
 from django.contrib import admin
 from django.urls import path, include
 from core import views
-from core.views import CustomAuthToken
+# from core.views import CustomAuthToken
 from .views import BlogView, get_usernames, SignUpAPIView, UpdatePeople, get_username, logout 
 
 
@@ -24,7 +24,7 @@ urlpatterns = [
     path('update/<str:id>', views.update, name='update'),
     path('people/update/', UpdatePeople.as_view()),
     path('delete/<str:id>', views.delete, name='delete'),
-    path('token/', CustomAuthToken.as_view()),
+    # path('token/', CustomAuthToken.as_view()),
     path('signUp/', views.signUpPage, name="signUp"),
     path('api/signup/', SignUpAPIView.as_view(), name='signup_api'),
     path('login/', views.loginPage, name="login"),

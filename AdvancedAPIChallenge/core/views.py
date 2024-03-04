@@ -9,7 +9,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from django.contrib.auth import authenticate, login, logout, get_user_model,login as auth_login, logout as auth_logout
+from django.contrib.auth import authenticate, login, login as auth_login, logout as auth_logout
 from django.contrib.sessions.models import Session
 from .forms import PeopleForm, CreateUserForm
 from django.contrib import messages
