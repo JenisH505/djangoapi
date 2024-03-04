@@ -468,7 +468,8 @@ code
 - import { useNavigate } from 'react-router-dom': Imports the useNavigate hook from react-router-dom, which allows programmatically           navigating to different routes/pages.
 - import Cookies from 'js-cookie': Imports the js-cookie package which allows getting/setting browser cookies.
 
-# const Login = (props) => {
+# step 1
+const Login = (props) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
@@ -478,11 +479,13 @@ code
 - const navigate = useNavigate(); - uses the imported useNavigate hook to get access to the navigate function for navigating between routes.
 - const [formData, setFormData] = useState({username: '', password: ''}) - uses React's useState hook to initialize a state variable called   formData to an object with empty username and password strings. Also returns the setFormData function for updating the state.
 
-# const [errorMessage, setErrorMessage] = useState('')
+# step 2
+const [errorMessage, setErrorMessage] = useState('')
 - Initializes a state variable errorMessage to track any login errors
 - Returns setErrorMessage function to update this state
 
-# const handleChange = (e) => {
+# step 3
+const handleChange = (e) => {
   const { name, value } = e.target  
   setFormData({ ...formData, [name]: value })
 
