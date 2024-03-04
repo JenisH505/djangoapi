@@ -401,5 +401,26 @@ class CustomAuthToken(ObtainAuthToken):
 - In this Component pages all the web page is handled.
 
 # 1. Signup.jsx (src/pages/signup.jsx)
-- 
 
+- const Signup = () => {
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password1: '',
+    password2: ''
+  });
+- const Signup = () => { ... }: This is the definition of the functional component using an arrow function. The empty parentheses ()          indicate that the component doesn't receive any props.
+- const [formData, setFormData] = useState({ ... }): This line uses the useState hook to declare a state variable named formData and a        function setFormData to update it.
+    - formData is initialized as an object with four properties: username, email, password1, and password2. These properties correspond to        the form fields in the signup form.
+    - setFormData is a function that will be used to update the formData state whenever the user types in the form fields.
+
+-   const [successMessage, setSuccessMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData({ ...formData, [name]: value })
+  };
+- const [successMessage, setSuccessMessage] = useState(''): This line declares a state variable named successMessage and a corresponding      function setSuccessMessage to update it.
+- const [errorMessage, setErrorMessage] = useState(''): Similarly, this line declares a state variable named errorMessage and a               corresponding function setErrorMessage to update it.
+- const handleChange = (e) => { ... }: This is the definition of the handleChange function, which is an event handler for form input          changes.
