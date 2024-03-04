@@ -373,4 +373,33 @@ class CustomAuthToken(ObtainAuthToken):
 - In this image the user token is provide.
 
 # Frontend React
+- Created a new project name my-app
+- This will launch React application in the browser at http://localhost:3000.
+
+# In React Project App.js
+- The necessary dependencies are imported at the top of the file:
+    React and useState from the 'react' package for creating functional components and managing state.
+    BrowserRouter, Route, Routes, and Navigate from the 'react-router-dom' package for handling routing in the application.
+    CSS file './App.css' for styling the application.
+    Other components (Signup, Login, HomePage, Profile, Index, About) are imported from their respective files in the "./pages" directory.
+- Inside the App component, two state variables are declared using the useState hook:
+    isLoggedIn represents the login status of the user (initially set to false).
+    currentForm represents the current form being displayed (initially set to 'login').
+- The handleLogin function is defined to update the isLoggedIn state to true when called. This function can be passed as a prop to the        Login component to handle the login logic.
+- The RedirectToHome component is defined as a function that returns a Navigate component, which redirects the user to the home page ("/").
+- The toggleForm function is defined to update the currentForm state based on the provided formName argument. This function can be passed     as a prop to the Signup and Login components to switch between the forms.
+- The Routes component is used to define the different routes and their corresponding components:
+    - The /home route renders the HomePage component.
+    - The /about route renders the About component.
+    - The / route (root route) renders the Index component.
+    - The /login route renders the Login component if currentForm is "login", otherwise it navigates to the /signup route. The toggleForm         function is passed as the onFormSwitch prop to the Login component.
+    - The /signup route renders the Signup component if currentForm is not "signup", otherwise it navigates to the /login route. The              toggleForm function is passed as the onFormSwitch prop to the Signup component.
+      If isLoggedIn is true, a catch-all route (*) is defined that redirects to the home page using the RedirectToHome component.
+    - The /profile route renders the Profile component.
+
+# In React my-app src/pages
+- In this Component pages all the web page is handled.
+
+# 1. Signup.jsx (src/pages/signup.jsx)
+- 
 
