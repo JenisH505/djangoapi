@@ -450,5 +450,15 @@ code
     - An async POST request is made using axios to the signup API endpoint, passing the formData state as the request body.
     - If successful, the successMessage state is updated to 'Account created successfully' and errorMessage is cleared.
     - The user is redirected to the /login page using window.location.href.
+- Inside catch:
+    The error object is logged.
+    If error.response exists, the response data, status and headers are logged.
+    The errorMessage state is updated to the error message and successMessage is cleared.
+    Key things to note:
+    async-await syntax is used for asynchronous control flow.
+    try-catch handles errors in async code.
+    axios.post makes an async POST request.
+    State variables are updated based on success or error scenarios.
+    Page redirect is achieved via window.location.href.
 
 
