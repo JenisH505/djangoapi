@@ -7,7 +7,7 @@ const Signup = () => {
     username: '',
     email: '',
     password1: '',
-    password2: ''
+    password2: 'a'
   });
 
   const [successMessage, setSuccessMessage] = useState('')
