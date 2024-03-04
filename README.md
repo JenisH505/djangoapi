@@ -117,13 +117,13 @@ Django URLs provide a powerful mechanism for routing incoming requests to the ap
 
 ## End of URL path ## 
 
-# forms.py
+# Forms.py
 - In forms the module contains from classes for the People model and user creation.
 - the classes section has two form classes i.e. PeopleForm and CreateUserForm
 
 
 
-# View.py 
+## View.py 
 - In short explanation, views.py is a key and main file in django project that contains the logic for the project that handles web requests and returning responses. 
 - In points:
     - Views are defined as functions or classes in views.py
@@ -137,7 +137,7 @@ Views act as the intermediary between the models and the templates, handling the
 
 # Project App 'core' views.py
 
-# 1 class PeopleViewSet
+## 1 class PeopleViewSet
 - This viewsets automatically provides 'list','create','retrieve','update', 'destroy' actions for the people model.
    Attributes:
         - queryset : The queryset of people objects to be used by the viewset.
@@ -145,13 +145,13 @@ Views act as the intermediary between the models and the templates, handling the
         - authentication : The authentication classes to be used for authenticating requests to the viewset. 
         - permission class : The permission classes to be used for determining access permissions to the viewset.
 
-# 2 Class PostViewSet
+## 2 Class PostViewSet
 - This code defines a view set for the Post model that provides CRUD operations. it uses PostSerializer to serialize and deserialize the model data and it includes a custom get_query set method that allows filtering the query set based on the author query parameters. 
 
 - The given view set is used to retrieve a list of posts, create new posts, retrieve individuals posts, update existing posts, and delete posts. the filtering functionality allows clients to retrieve posts based on the author username
 
 
-# 3 The def Index
+## 3 The def Index
 - this index function is a view function that handles request sto a specific url. 
 
 - pop = People.objects.all() = this code retrieves all the objects from the People model using the 'all()' method and assign them to the variable 'pop'.
@@ -160,20 +160,20 @@ Views act as the intermediary between the models and the templates, handling the
 
 - return render(request, 'core.html', context) = This line renders the core.html template using the render function. It takes three arguments:
 
-# 4 In def add Function in core.views
+## 4 In def add Function in core.views
 - The add function handles the submission of a form to add a new People object to the database. if the request method is POST, it retrieves the form data, creates a new People object, saves it to the database, and redirects the user to the url 'home' and if the request method is GET it renders the core.html template
 
-# The 'home' and 'core.html' is in templates/ALlPage
+#### The 'home' and 'core.html' is in templates/ALlPage
 
-# 5 Class AddUser class API
+## 5 Class AddUser class API
 
 - this AddUSer class API view handles adding a new user to the database. 
 - this AddUser API view handles  POST requests to add a new user to the database. It retrieves the required fields from the request, creates a new People object, saves it to the database, and returns a success response if all fields are provided. If any required field is missing, it returns an error response.
 
-# 6 Def edit
+### 6 Def edit
 - this function help to edit the People listed
 
-# 7 Def Update fun
+### 7 Def Update fun
 - This Update function is view function which handles the updating functionality of people listed in database with the help of provided id. 
 
 
@@ -207,10 +207,10 @@ class AddUser(APIView):
 pop = People(username=username, email=email, password=password): Creates a new instance of the People model with the retrieved username, email, and password values.
 pop.save(): Saves the newly created People instance to the database.
 
-# The testing for Add user
+## The testing for Add user
 <img width="1060" alt="Screenshot 2024-03-03 at 10 04 14 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/d52d2214-f7aa-4945-8804-5ae189123558">
 
-# 2. API for Updating User
+## 2. API for Updating User
 -  This view handles a PUT request to update a People object in the database. It expects the email field to be provided in the request data to identify the person to update. If the person is found, the view updates the person's data using the provided serializer data. If the serializer data is valid, the updated data is saved, and a success response is returned. If the serializer data is invalid, an error response is returned.
 
 @permission_classes([])
@@ -239,19 +239,19 @@ class UpdatePeople(APIView):
 - if a People object is found, the code proceeds to the next step.
 - serializer = PeopleSerializer(person, data=request.data, partial=True): Creates an instance of the PeopleSerializer serializer, passing the person object and the updated data from the request. The partial=True argument allows for partial updates, meaning that not all fields need to be provided in the request data.
 
-# The testing for Updating user
+## The testing for Updating user
 <img width="1060" alt="Screenshot 2024-03-03 at 10 19 06 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/b037f6ce-2871-449a-ac16-67bb055aa5b3">
 - This image shows that the given user with that email is not found cause with that email no user is stored.
 
-# update testing image 2
+## update testing image 2
 <img width="1060" alt="Screenshot 2024-03-03 at 10 21 08 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/5379ec4d-34be-40a8-8c63-2ea7fc9e9967">
 - The user details with the email stored 
 
-# update testing image 3
+## update testing image 3
 <img width="1060" alt="Screenshot 2024-03-03 at 10 23 08 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/fc6394f6-3d30-42a7-9ac1-2f5ea34428a3">
 - In this image the username is update 
 
-# 3. API for Signup 
+## 3. API for Signup 
 - This view handles a POST request to create a new user account. It expects the user data to be provided in the request data, which is then passed to the CreateUserForm form for validation and saving. If the form data is valid, a new user account is created, and a success response with a thank you message is returned. If the form data is invalid, an error response with the form errors is returned.
 - code
 class SignUpAPIView(APIView):
@@ -313,11 +313,11 @@ def login(request):
     - request.session.create() - Creates a new session for the user
     - return Response({'message': 'Login successful', 'session_id': request.session.session_key})
 
-# The Testing for Login API
+## The Testing for Login API
 <img width="1060" alt="Screenshot 2024-03-03 at 10 44 16 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/25f5c859-9811-41c5-af52-06312b7b2d57">
 - IN this image the recently signup user sandy is logged in with his session id.
 
-# 4. API for Logout
+## 4. API for Logout
 - This view handles user logout. When a POST request is made to this view, it logs out the currently authenticated user using auth_logout, flushes the user's session data using request.session.flush(), and returns a success response with the message "Logout successful".
 code
 * @api_view(['POST'])
@@ -336,14 +336,16 @@ def logout(request):
     - request.session.flush(): Deletes all data associated with the user's session.
     - return Response({'message': 'Logout successful'})
 
-# The Testing for Logout API
+## The Testing for Logout API
 <img width="1060" alt="Screenshot 2024-03-03 at 11 01 32 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/2a869cde-4a63-45b9-8da2-0ebc8459a7c0">
 - In this image the signup and login user is now logout
 
-# 4. API for Token Generation
+## 4. API for Token Generation
 - This custom authentication token view extends the default behavior of ObtainAuthToken by including additional user information (username and email) in the response along with the token.
 code
-* class CustomAuthToken(ObtainAuthToken):
+
+### code
+class CustomAuthToken(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data,
@@ -368,15 +370,15 @@ code
         'email': The email of the authenticated user.
 - By using this CustomAuthToken view, when a client makes a POST request to the corresponding endpoint with valid credentials, they will receive a response containing the authentication token and the associated user's username and email.
 
-# The testing for Token
+## The testing for Token
 <img width="1060" alt="Screenshot 2024-03-04 at 7 54 07 AM" src="https://github.com/JenisH505/djangoapi/assets/123802098/c99614b2-5304-4b38-af21-cce60150e9d6">
 - In this image the user token is provide.
 
-# Frontend React
+## Frontend React
 - Created a new project name my-app
 - This will launch React application in the browser at http://localhost:3000.
 
-# In React Project App.js
+## In React Project App.js
 - The necessary dependencies are imported at the top of the file:
     React and useState from the 'react' package for creating functional components and managing state.
     BrowserRouter, Route, Routes, and Navigate from the 'react-router-dom' package for handling routing in the application.
@@ -397,10 +399,10 @@ code
       If isLoggedIn is true, a catch-all route (*) is defined that redirects to the home page using the RedirectToHome component.
     - The /profile route renders the Profile component.
 
-# In React my-app src/pages
+### In React my-app src/pages
 - In this Component pages all the web page is handled.
 
-## 1. Signup.jsx (src/pages/signup.jsx)
+# 1. Signup.jsx (src/pages/signup.jsx)
 
 # const Signup = () => {
   const [formData, setFormData] = useState({
@@ -417,7 +419,8 @@ code
 -   const [successMessage, setSuccessMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
 
- # const handleChange = (e) => {
+### code
+ const handleChange = (e) => {
     const { name, value } = e.target
     setFormData({ ...formData, [name]: value })
   };
@@ -425,7 +428,8 @@ code
     - const [errorMessage, setErrorMessage] = useState(''): Similarly, this line declares a state variable named errorMessage and a               corresponding function setErrorMessage to update it.
     - const handleChange = (e) => { ... }: This is the definition of the handleChange function, which is an event handler for form input          changes.
 
-# const handleSubmit = async (e) => {
+### code 
+const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post('http://127.0.0.1:8000/auth/api/signup/', formData)
@@ -461,14 +465,14 @@ code
     State variables are updated based on success or error scenarios.
     Page redirect is achieved via window.location.href.
 
-## 2. Login.jsx (src/pages/Login.jsx)
+# 2. Login.jsx (src/pages/Login.jsx)
 - This is Login page. In this login Session_id is generated for the login users. As this is Session login too.
 - import React, { useState } from "react": Imports React, which contains React capabilities and APIs, and specifically the useState hook      which allows creating state in functional components.
 - import axios from 'axios': Imports the axios library which makes HTTP requests to external APIs/servers.
 - import { useNavigate } from 'react-router-dom': Imports the useNavigate hook from react-router-dom, which allows programmatically           navigating to different routes/pages.
 - import Cookies from 'js-cookie': Imports the js-cookie package which allows getting/setting browser cookies.
 
-# step 1
+### step 1
 const Login = (props) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -479,12 +483,12 @@ const Login = (props) => {
 - const navigate = useNavigate(); - uses the imported useNavigate hook to get access to the navigate function for navigating between routes.
 - const [formData, setFormData] = useState({username: '', password: ''}) - uses React's useState hook to initialize a state variable called   formData to an object with empty username and password strings. Also returns the setFormData function for updating the state.
 
-# step 2
+### step 2
 const [errorMessage, setErrorMessage] = useState('')
 - Initializes a state variable errorMessage to track any login errors
 - Returns setErrorMessage function to update this state
 
-# step 3
+### step 3
 const handleChange = (e) => {
   const { name, value } = e.target  
   setFormData({ ...formData, [name]: value })
@@ -492,12 +496,12 @@ const handleChange = (e) => {
 - Called when input values change
 - Updates the formData state with the new input value
 
-# step 4
+### step 4
 const axiosInstance = axios.create({
   withCredentials: true,
 });
 - Creates Axios instance to make requests that can access cookies.
 
-# step 5
+### step 5
 const csrftoken = Cookies.get('csrftoken');
 - get csrf token from cookies to include with request.
