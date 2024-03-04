@@ -402,7 +402,7 @@ code
 
 # 1. Signup.jsx (src/pages/signup.jsx)
 
-* const Signup = () => {
+const Signup = () => {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -425,7 +425,7 @@ code
     - const [errorMessage, setErrorMessage] = useState(''): Similarly, this line declares a state variable named errorMessage and a               corresponding function setErrorMessage to update it.
     - const handleChange = (e) => { ... }: This is the definition of the handleChange function, which is an event handler for form input          changes.
 
-  * const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post('http://127.0.0.1:8000/auth/api/signup/', formData)
@@ -468,7 +468,7 @@ code
 - import { useNavigate } from 'react-router-dom': Imports the useNavigate hook from react-router-dom, which allows programmatically           navigating to different routes/pages.
 - import Cookies from 'js-cookie': Imports the js-cookie package which allows getting/setting browser cookies.
 
-* const Login = (props) => {
+const Login = (props) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
@@ -478,17 +478,17 @@ code
 - const navigate = useNavigate(); - uses the imported useNavigate hook to get access to the navigate function for navigating between routes.
 - const [formData, setFormData] = useState({username: '', password: ''}) - uses React's useState hook to initialize a state variable called   formData to an object with empty username and password strings. Also returns the setFormData function for updating the state.
 
-* const [errorMessage, setErrorMessage] = useState('')
+const [errorMessage, setErrorMessage] = useState('')
 - Initializes a state variable errorMessage to track any login errors
 - Returns setErrorMessage function to update this state
 
-* const handleChange = (e) => {
+const handleChange = (e) => {
   const { name, value } = e.target  
   setFormData({ ...formData, [name]: value })
 - Called when input values change
 - Updates the formData state with the new input value
 
-* const axiosInstance = axios.create({
+const axiosInstance = axios.create({
   withCredentials: true,
 });
 - Creates Axios instance to make requests that can access cookies.
