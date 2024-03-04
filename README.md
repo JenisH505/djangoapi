@@ -339,3 +339,38 @@ def logout(request):
 # The Testing for Logout API
 <img width="1060" alt="Screenshot 2024-03-03 at 11 01 32 PM" src="https://github.com/JenisH505/djangoapi/assets/123802098/2a869cde-4a63-45b9-8da2-0ebc8459a7c0">
 - In this image the signup and login user is now logout
+
+# 4. API for Token Generation
+- This custom authentication token view extends the default behavior of ObtainAuthToken by including additional user information (username and email) in the response along with the token.
+code
+class CustomAuthToken(ObtainAuthToken):
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data,
+                                           context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+            'username': user.username,
+            'email': user.email
+        })
+
+- The CustomAuthToken class overrides the post method of the ObtainAuthToken view.
+- Inside the post method, it creates an instance of the serializer class specified by self.serializer_class. The serializer is used to        validate and deserialize the incoming request data. The request.data is passed as the data argument to the serializer, and the request      object is passed as the context to provide additional context to the serializer.
+    - The is_valid method is called on the serializer instance to validate the incoming data. If the data is invalid, it will raise an            exception using raise_exception=True.
+    - If the data is valid, the validated_data attribute of the serializer is accessed to retrieve the authenticated user object.
+    - The code then uses the get_or_create method of the Token model to retrieve or create a token for the authenticated user. If a token         already exists for the user, it will be retrieved; otherwise, a new token will be created.
+    - a response is returned using the Response class from DRF. The response contains a dictionary with the following key-value pairs:
+        'token': The key of the user's authentication token.
+        'username': The username of the authenticated user.
+        'email': The email of the authenticated user.
+- By using this CustomAuthToken view, when a client makes a POST request to the corresponding endpoint with valid credentials, they will receive a response containing the authentication token and the associated user's username and email.
+
+# The testing for Token
+<img width="1060" alt="Screenshot 2024-03-04 at 7 54 07 AM" src="https://github.com/JenisH505/djangoapi/assets/123802098/c99614b2-5304-4b38-af21-cce60150e9d6">
+- In this image the user token is provide.
+
+# Frontend React
+
