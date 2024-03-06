@@ -80,6 +80,33 @@ def loginPage(request):
     context = {}
     return render(request, "AllPage/login.html", context)
 
+
+# def get_client_ip(request):
+#     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+#     if x_forwarded_for:
+#         ip = x_forwarded_for.split(',')[-1].strip()
+#     else:
+#         ip = request.META.get('REMOTE_ADDR')
+#         # Handle IPv6 addresses in REMOTE_ADDR
+#         if ':' in ip and '.' not in ip:
+#             ip = ip.split(',')[-1].strip('[]')
+#     return ip
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        # If multiple IP addresses are present in X-Forwarded-For header, take the first one
+        # This is because the first IP address is the client's IP, and subsequent ones are proxies
+        ip = x_forwarded_for.split(',')[0].strip()
+        if ':' in ip:  # If it's an IPv6 address
+            # Handle IPv6 addresses
+            ip = ip.split('::')[-1]
+            ip = ip.split(':')[-1]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+
 @api_view(['POST'])
 @permission_classes([])
 def login(request):
@@ -87,18 +114,24 @@ def login(request):
         username = request.data.get('username')
         password = request.data.get('password')
 
-    if not (username):
-        return Response({'error': 'Username is required'})
+        if not username:
+            return Response({'error': 'Username is required'})
 
-    user = authenticate(request, username=username, password=password)
-    if user is not None:
-        auth_login(request, user)
-        # login(request, user)
-        request.session.create()
-        return Response({'message': 'Login successful', 'session_id': request.session.session_key})
-        # return Response({'message': 'Login successful'})
-    else:
-        return Response({'message': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            auth_login(request, user)
+            request.session.create()
+
+            ip_user = get_client_ip(request) 
+
+            return Response({
+                'message': 'Login successful',
+                'session_id': request.session.session_key,
+                'IP Address': ip_user
+            })
+        else:
+            return Response({'message': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 @csrf_exempt

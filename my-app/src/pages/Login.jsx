@@ -39,9 +39,10 @@ const Login = (props) => {
           'X-CSRFToken': csrftoken,
         },
       }).then((response) => {
-      const { session_id } = response.data;
+      const { session_id, ip_user } = response.data;
       Cookies.set('session_id', session_id, { path: '/' });
       localStorage.setItem('username', formData.username)
+      localStorage.setItem('ip_user', ip_user)
       setErrorMessage('')
       navigate('/profile');
       
