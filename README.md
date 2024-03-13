@@ -401,3 +401,26 @@ const axiosInstance = axios.create({
 ### step 5
 const csrftoken = Cookies.get('csrftoken');
 - get csrf token from cookies to include with request.
+
+# User IP Address and associated Location
+- In the Login view function which handles POST request for user authentication.
+- Added the code to retrieve user current IP address and Location.
+
+### code
+1. ip = request.META.get('REMOTE_ADDR')
+- This line retrieves the IP address of the client making the request. In Django, the request.META dictionary contains all the HTTP headers and other metadata related to the current request.
+2. if ip.startswith(('127.', '192.168.', '10.', '172.16.'))
+- This condition checks if the IP address obtained from request.META.get('REMOTE_ADDR').
+3. try:
+    response = requests.get('https://api64.ipify.org?format=json')
+    if response.status_code == 200:
+        ip_data = response.json()
+        ip = ip_data.get('ip')
+    else:
+        return Response({'error': 'Failed to retrieve public IP address'}, status=response.status_code)
+except Exception as e:
+    return Response({'error': 'Error retrieving public IP address'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+- In this part of the code, the application tries to retrieve the public IP address of the client by making a GET request to https://api64.ipify.org?format=json. This is a third-party service that provides the public IP address of the client.
+
+### Short description 
+- This added code it to retrieve the public IP address of the client if the initially obtained IP address seems to be a private IP address (likely due to the client being behind a NAT or proxy).  
