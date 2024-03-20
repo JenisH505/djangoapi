@@ -423,4 +423,18 @@ except Exception as e:
 - In this part of the code, the application tries to retrieve the public IP address of the client by making a GET request to https://api64.ipify.org?format=json. This is a third-party service that provides the public IP address of the client.
 
 ### Short description 
-- This added code it to retrieve the public IP address of the client if the initially obtained IP address seems to be a private IP address (likely due to the client being behind a NAT or proxy).  
+- This added code it to retrieve the public IP address of the client if the initially obtained IP address seems to be a private IP address (likely due to the client being behind a NAT or proxy).
+
+# Shwoing User IP Address and Location data in django home template 
+- The homePage function is a Django view that handles requests to the home page. It retrieves the current user's ID and their IP address from the request. If the IP address is private, it tries to fetch the public IP address using an external API. Then, it attempts to retrieve the user's location data (city, region, country) based on the IP address using another API.
+
+- This Django View function homePage handles requests to the home page of a website.
+
+### code
+1. ip_address = request.META.get('REMOTE_ADDR'):
+- Gets the IP address of the user making the request from the request metadata.
+2. The code then checks if the IP address starts with certain private IP address prefixes (127., 192.168., 10., or 172.16.):
+- If it does, it tries to retrieve the public IP address using the ipify.org API. If successful, it updates the ip_address variable with the public IP address. If not successful, it 
+  sets ip_address to a failure message.
+3. After retrieving the public IP address (or the original IP address if it's not a private IP), the code tries to retrieve location data (city, region, country) for the IP address       using the ipinfo.io API.
+4. At last the code creates a context dictionary containing the user_id, ip_address, and location_data, and renders the home.html template with this context.
