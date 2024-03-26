@@ -10,7 +10,6 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import authenticate, login, login as auth_login, logout as auth_logout
-from django.contrib.sessions.models import Session
 from .forms import PeopleForm, CreateUserForm
 from django.contrib import messages
 from rest_framework.views import APIView
@@ -21,7 +20,9 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
-
+from rest_framework.permissions import AllowAny
+import requests
+from drf_yasg.generators import OpenAPISchemaGenerator
 
 class PeopleViewSet(viewsets.ModelViewSet): # Viewset for viewing and editing People instances
     queryset= People.objects.all()
@@ -40,6 +41,15 @@ class PostViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(author__username__istartswith=author)
         return queryset
 
+class CustomSchemaGenerator(OpenAPISchemaGenerator):
+    def get_schema(self, request=None, public=False):
+        schema = super().get_schema(request, public)
+        schema.basePath = f"/{request.version}" if request and request.version else "/"
+        return schema
+
+@api_view(['GET'])
+def swagger_ui(request):
+    return render(request, 'swagger-ui.html')
 
 @csrf_exempt
 def signUpPage(request):
@@ -64,71 +74,92 @@ class SignUpAPIView(APIView):
             return Response({'message': 'Account created successfully. Thank you for signing up!'})
         return Response(form.errors)
     
-@csrf_protect
 def loginPage(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return render(request,'/Users/jenishmanandhar/djangoapi/AdvancedAPIChallenge/core/templates/AllPage/home.html')
-                    # return render(request,'/Users/jenishmanandhar/djangoapi/AdvancedAPIChallenge/core/templates/AllPage/home.html')
+
+            # Retrieve user IP address
+            ip = request.META.get('REMOTE_ADDR')
+            if ip.startswith(('127.', '192.168.', '10.', '172.16.')):
+                try:
+                    # Fetch public IP address using external API
+                    response = requests.get('https://api64.ipify.org?format=json')
+                    if response.status_code == 200:
+                        ip_data = response.json()
+                        ip = ip_data.get('ip')
+                except requests.exceptions.RequestException as e:
+                    # Handle request exception
+                    print(f"Error fetching public IP address: {e}")
+                    pass 
+
+            # Initialize location data
+            location_data = "Location data not available"
+            try:
+                # Retrieve location data using external API
+                response = requests.get(f'https://ipinfo.io/{ip}/json')
+                if response.status_code == 200:
+                    ip_data = response.json()
+                    location_data = f"City: {ip_data.get('city')}, Region: {ip_data.get('region')}, Country: {ip_data.get('country')}"
+            except requests.exceptions.RequestException as e:
+                # Handle request exception
+                print(f"Error retrieving location data: {e}")
+
+            context = {
+                'IP_Address': ip,
+                'location_data': location_data,
+            }
+            return render(request, 'core:home', context)
         else:
             messages.info(request, 'Username or password is incorrect')
     context = {}
-    return render(request, "AllPage/login.html", context)
-
-
-# def get_client_ip(request):
-#     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-#     if x_forwarded_for:
-#         ip = x_forwarded_for.split(',')[-1].strip()
-#     else:
-#         ip = request.META.get('REMOTE_ADDR')
-#         # Handle IPv6 addresses in REMOTE_ADDR
-#         if ':' in ip and '.' not in ip:
-#             ip = ip.split(',')[-1].strip('[]')
-#     return ip
-
-def get_client_ip(request):
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        # If multiple IP addresses are present in X-Forwarded-For header, take the first one
-        # This is because the first IP address is the client's IP, and subsequent ones are proxies
-        ip = x_forwarded_for.split(',')[0].strip()
-        if ':' in ip:  # If it's an IPv6 address
-            # Handle IPv6 addresses
-            ip = ip.split('::')[-1]
-            ip = ip.split(':')[-1]
-    else:
-        ip = request.META.get('REMOTE_ADDR')
-    return ip
-
+    return render(request, 'registration/login.html', context)
 
 @api_view(['POST'])
-@permission_classes([])
+@permission_classes([AllowAny])
 def login(request):
     if request.method == 'POST':
         username = request.data.get('username')
         password = request.data.get('password')
-
         if not username:
-            return Response({'error': 'Username is required'})
-
+            return Response({'error': 'Username is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
         user = authenticate(request, username=username, password=password)
-
         if user is not None:
             auth_login(request, user)
             request.session.create()
-
-            ip_user = get_client_ip(request) 
-
+            ip = request.META.get('REMOTE_ADDR')
+            
+            if ip.startswith(('127.', '192.168.', '10.', '172.16.')):
+                # If IP address is in a reserved range, use external service to determine public IP
+                try:
+                    response = requests.get('https://api64.ipify.org?format=json')
+                    if response.status_code == 200:
+                        ip_data = response.json()
+                        ip = ip_data.get('ip')
+                    else:
+                        return Response({'error': 'Failed to retrieve public IP address'}, status=response.status_code)
+                except Exception as e:
+                    return Response({'error': 'Error retrieving public IP address'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+            try:
+                response = requests.get(f'https://ipinfo.io/{ip}/json')
+                if response.status_code == 200:
+                    ip_data = response.json()
+                    location_data = f"City: {ip_data.get('city')}, Region: {ip_data.get('region')}, Country: {ip_data.get('country')}"
+                else:
+                    location_data = "Location data not available"
+            except Exception as e:
+                location_data = "Error retrieving location data"
+            
             return Response({
                 'message': 'Login successful',
                 'session_id': request.session.session_key,
-                'IP Address': ip_user
+                'IP_Address': ip,
+                'location_data': location_data,
             })
         else:
             return Response({'message': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
@@ -162,9 +193,39 @@ def homePage(request):
     current_user = request.user
     user_id = current_user.id
     print(user_id)
-    context = {'user_id': user_id}
-    return render(request, 'AllPage/home.html', context) 
 
+    ip_address = request.META.get('REMOTE_ADDR')
+    if ip_address.startswith(('127.', '192.168.', '10.', '172.16.')):
+        try:
+            response = requests.get('https://api64.ipify.org?format=json')
+            if response.status_code == 200:
+                ip_add = response.json()
+                ip_address = ip_add.get('ip')
+            else:
+                ip_address = 'Failed to retrieve public IP address'
+        except Exception as e:
+            ip_address = 'Failed to retrieve public IP address'
+
+        try:
+            response = requests.get(f'https://ipinfo.io/{ip_address}/json')
+            if response.status_code == 200:
+                ip_add = response.json()
+                location_data = f"City: {ip_add.get('city')}, Region: {ip_add.get('region')}, Country: {ip_add.get('country')}"
+            else:
+                location_data = "Location data not available"
+        except Exception as e:
+            location_data = "Error retrieving location data"
+    else:
+        ip_address = ip_address
+        location_data = "Location data not available for non-private IP addresses"
+
+    context = {
+        'user_id': user_id,
+        'ip_address': ip_address,
+        'location_data': location_data,
+    }
+
+    return render(request, 'AllPage/home.html', context)
 
 class BlogView(ListView):
     model=Post

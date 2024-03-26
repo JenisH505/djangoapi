@@ -13,6 +13,11 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import os
 from corsheaders.defaults import default_methods
+import sys
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+GEOLITE2_CITY_DB_PATH = os.path.join(BASE_DIR, 'geoip_database', 'GeoLite2-City.mmdb')
+LOGIN_REDIRECT_URL = '/home/'
+
 
 CORS_ALLOW_METHODS = (
     *default_methods,
@@ -47,8 +52,10 @@ INSTALLED_APPS = [
     "rest_framework",
     "core",
     "rest_framework.authtoken",
-
+    "rest_framework_swagger",
 ]
+
+
 '''
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (

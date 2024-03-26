@@ -5,10 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
 const Login = (props) => {
+  const [location, setLocation] = useState('');
+  const [ip, setIP] = useState('');
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
-    password: ''
+    password: '',
+    location_data: ''
   });
   
   const [errorMessage, setErrorMessage] = useState('')
@@ -34,15 +37,17 @@ const Login = (props) => {
       axiosInstance.post('http://127.0.0.1:8000/auth/api/login/', {
         username: formData.username,
         password: formData.password, 
+        location_data: formData.location_data
       }, {
         headers: {
           'X-CSRFToken': csrftoken,
         },
       }).then((response) => {
-      const { session_id, ip_user } = response.data;
+      const { session_id, IP_Address, location_data } = response.data;
       Cookies.set('session_id', session_id, { path: '/' });
       localStorage.setItem('username', formData.username)
-      localStorage.setItem('ip_user', ip_user)
+      setIP(IP_Address)
+      setLocation(location_data)
       setErrorMessage('')
       navigate('/profile');
       
@@ -70,6 +75,8 @@ const Login = (props) => {
         </form>
         <br></br>
         <button className="link-btn" onClick={() => props.onFormSwitch('register')}>Don't have an account? Signup here.</button>
+        {ip && <p>IP Address: {ip}</p>}
+        {location && <p>Location: {location}</p>}
       </div>
     </div>
   );

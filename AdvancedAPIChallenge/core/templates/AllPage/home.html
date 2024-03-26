@@ -1,5 +1,3 @@
- <h1>User Profile Page</h1>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,14 +6,13 @@
 * {
   box-sizing: border-box;
 }
-  div.horizontal a {
+div.horizontal a {
   display: block;
   width: 100px;
-  }
-  li.last
-  {
-  float:right !important;
-  }
+}
+li.last {
+  float: right !important;
+}
 /* Add a gray background color with some padding */
 body {
   font-family: Arial;
@@ -28,44 +25,52 @@ body {
   padding: 30px;
   font-size: 40px;
   text-align: center;
-  background: #696969 ;
+  background: #696969;
 }
 
 /* Create two unequal columns that floats next to each other */
 /* Left column */
-.leftcolumn {   
+.leftcolumn {
   float: left;
   width: 75%;
 }
 .log {
   font-size: 40px;
   text-align: top;
-  background: #696969 ;
+  background: #696969;
 }
 
-
+/* Style for displaying IP address and location */
+.location-info {
+  margin-top: 20px;
+  background: #A9A9A9;
+  padding: 20px;
+}
 </style>
 </head>
 <body>
   <div class="horizontal">
-       <a href="{% url 'core:login' %}" class="last">Logout</a>
+    <a href="{% url 'core:login' %}" class="last">Logout</a>
+  </div>
+  <div class="header">
+    <ul>
+      <p style="color: black"> This is {{ user.username }} Profile.</p>
     </ul>
   </div>
-<div class="header">
-  <ul>
-    <p style="color: black"> This is {{ user.username }} Profile.</p>
-  </ul>
-</div>
 
-<div class="row">
-  <div class="leftcolumn">
-    <div class="card">
-      <h2></h2>
+  <div class="row">
+    <div class="leftcolumn">
+      <div class="card">
+        <h2>User Profile Page</h2>
+        <div class="location-info">
+          <h1>User Current IP Address and Location Data</h1>
+          <h3>IP Address:</h3>
+          <p>{{ ip_address }}</p>
+          <h3>Location:</h3>
+          <p>{{ location_data }}</p>
+        </div>
+      </div>
     </div>
   </div>
-</div>
-
-
-</div>
 </body>
 </html>
