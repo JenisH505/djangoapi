@@ -459,3 +459,13 @@ except Exception as e:
 ## In views.py
 1. class CustomSchemaGenerator(OpenAPISchemaGenerator):
 - This line defines a custom class CustomSchemaGenerator that extends the OpenAPISchemaGenerator class from the drf_yasg library. This class is used to generate the OpenAPI schema for   the Django REST Framework (DRF) API.
+2. def get_schema(self, request=None, public=False):
+    schema = super().get_schema(request, public)
+    schema.basePath = f"/{request.version}" if request and request.version else "/"
+    return schema
+- This method overrides the get_schema method of the parent OpenAPISchemaGenerator class. It first calls the parent method to get the initial schema. Then, it modifies the basePath      property of the schema based on the value of request.version. If the request object has a version attribute, the basePath is set to /{request.version}.
+3. @api_view(['GET'])
+def swagger_ui(request):
+    return render(request, 'swagger-ui.html')
+- This is a Django view function decorated with @api_view(['GET']), which means it accepts only GET requests. When this view is called, it renders the swagger-ui.html template. This     template is likely the Swagger UI interface, which allows users to explore and interact with the API documentation.
+
