@@ -438,3 +438,24 @@ except Exception as e:
   sets ip_address to a failure message.
 3. After retrieving the public IP address (or the original IP address if it's not a private IP), the code tries to retrieve location data (city, region, country) for the IP address       using the ipinfo.io API.
 4. At last the code creates a context dictionary containing the user_id, ip_address, and location_data, and renders the home.html template with this context.
+
+# Implementing swagger (for api documentation)
+## In url.py
+### code
+1. schema_view = get_schema_view(
+    openapi.Info(
+        title="my APiss",
+        default_version='v1',
+        description="Task",
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
+- This code sets up the Swagger schema view, which provides documentation for the API. It specifies the title, version, and description of the API, and allows public access to the       documentation.
+2. path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'):
+- Maps the /swagger/ URL to the Swagger documentation UI, using the schema_view instance created earlier. The cache_timeout=0 argument ensures that the documentation is always up-to-date.
+3. path('openapi/', schema_view.as_view(), name='openapi-schema'):
+- Maps the /openapi/ URL to the OpenAPI schema view, which provides the raw OpenAPI schema definition for the API.
+## In views.py
+1. class CustomSchemaGenerator(OpenAPISchemaGenerator):
+- This line defines a custom class CustomSchemaGenerator that extends the OpenAPISchemaGenerator class from the drf_yasg library. This class is used to generate the OpenAPI schema for   the Django REST Framework (DRF) API.
