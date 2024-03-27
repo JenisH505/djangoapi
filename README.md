@@ -468,4 +468,7 @@ except Exception as e:
 def swagger_ui(request):
     return render(request, 'swagger-ui.html')
 - This is a Django view function decorated with @api_view(['GET']), which means it accepts only GET requests. When this view is called, it renders the swagger-ui.html template. This     template is likely the Swagger UI interface, which allows users to explore and interact with the API documentation.
+## Templates (drf-yasg/swagger-ui.html)
+- The HTML template sets up the structure and imports the necessary files to render the Swagger UI interface. The JavaScript code initializes the Swagger UI system, configures it to fetch the API documentation from the specified endpoint, and renders the UI in the designated div element on the page.
 
+- When a user opens this page in their browser, they will see the Swagger UI interface, which allows them to explore and interact with the API documentation in a user-friendly way.
