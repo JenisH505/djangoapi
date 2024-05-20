@@ -23,6 +23,10 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 import requests
 from drf_yasg.generators import OpenAPISchemaGenerator
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+from django.http import JsonResponse
+from rest_framework import authentication, permissions
 
 class PeopleViewSet(viewsets.ModelViewSet): # Viewset for viewing and editing People instances
     queryset= People.objects.all()
@@ -74,6 +78,38 @@ class SignUpAPIView(APIView):
             return Response({'message': 'Account created successfully. Thank you for signing up!'})
         return Response(form.errors)
     
+# Assuming CreateUserForm is defined somewhere in your project
+from .forms import CreateUserForm
+
+class SignUpAPIView(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['username', 'email', 'password1', 'password2'],
+            properties={
+                'username': openapi.Schema(type=openapi.TYPE_STRING),
+                'email': openapi.Schema(type=openapi.TYPE_STRING),
+                'password1': openapi.Schema(type=openapi.TYPE_STRING),
+                'password2': openapi.Schema(type=openapi.TYPE_STRING),
+            },
+        ),
+        responses={
+            200: openapi.Response(description='Success', schema=openapi.Schema(type=openapi.TYPE_OBJECT)),
+            400: openapi.Response(description='Bad request', schema=openapi.Schema(type=openapi.TYPE_OBJECT)),
+        },
+    )
+    def post(self, request):
+        form = CreateUserForm(request.data)
+
+        if form.is_valid():
+            form.save()
+            return Response({'message': 'Account created successfully.'}, status=status.HTTP_200_OK)
+        return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 def loginPage(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -117,6 +153,118 @@ def loginPage(request):
             messages.info(request, 'Username or password is incorrect')
     context = {}
     return render(request, 'registration/login.html', context)
+
+class LoginAPIView(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['username', 'password'],
+            properties={
+                'username': openapi.Schema(type=openapi.TYPE_STRING),
+                'password': openapi.Schema(type=openapi.TYPE_STRING),
+            },
+        ),
+        responses={
+            201: openapi.Response(
+                description='Successful login',
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'token': openapi.Schema(type=openapi.TYPE_STRING),
+                        'user': openapi.Schema(type=openapi.TYPE_OBJECT),
+                    },
+                ),
+            ),
+            400: openapi.Response(
+                description='Bad request',
+                schema=openapi.Schema(type=openapi.TYPE_OBJECT),
+            ),
+        },
+    )
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        if not username or not password:
+            return Response({'error': 'Username and password are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            token, _ = Token.objects.get_or_create(user=user)
+            user_data = {
+                'username': user.username,
+                'email': user.email,
+                # Add any other user profile fields you want to include
+            }
+            return Response({'token': token.key, 'user': user_data}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+
+class UserProfileView(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name='username',
+                in_=openapi.IN_QUERY,
+                description='Username of the logged-in user',
+                type=openapi.TYPE_STRING,
+                required=True,
+            ),
+            openapi.Parameter(
+                name='token',
+                in_=openapi.IN_QUERY,
+                description='Token of the logged-in user',
+                type=openapi.TYPE_STRING,
+                required=True,
+            ),
+        ],
+        responses={
+            200: openapi.Response(
+                description='Successful response',
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'username': openapi.Schema(type=openapi.TYPE_STRING),
+                        'email': openapi.Schema(type=openapi.TYPE_STRING),
+                        'token': openapi.Schema(type=openapi.TYPE_STRING),
+                        # Add any other user profile fields you want to include
+                    },
+                ),
+            ),
+            401: openapi.Response(
+                description='Unauthorized',
+                schema=openapi.Schema(type=openapi.TYPE_OBJECT),
+            ),
+            404: openapi.Response(
+                description='User not found',
+                schema=openapi.Schema(type=openapi.TYPE_OBJECT),
+            ),
+        },
+    )
+    def get(self, request):
+        username = request.query_params.get('username')
+        token = request.query_params.get('token')
+
+        if not username or not token:
+            return Response({'error': 'Username and token are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(username=username)
+            if not Token.objects.filter(user=user, key=token).exists():
+                raise User.DoesNotExist
+        except User.DoesNotExist:
+            return Response({'error': 'Invalid username or token'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        user_data = {
+            'username': user.username,
+            'email': user.email,
+            'token': token,
+        }
+        return Response(user_data)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -171,7 +319,6 @@ def logout(request):
     auth_logout(request)
     request.session.flush()
     return Response({'message': 'Logout successful'})
-
 
 def get_usernames(request):
 
@@ -244,6 +391,47 @@ def index(request):
 
 #creating Add method to Add people(Users)
 
+class AddUserAPIView(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['username', 'email', 'password'],
+            properties={
+                'username': openapi.Schema(type=openapi.TYPE_STRING),
+                'email': openapi.Schema(type=openapi.TYPE_STRING),
+                'password': openapi.Schema(type=openapi.TYPE_STRING),
+            },
+        ),
+        responses={
+            201: openapi.Response(
+                description='User added successfully',
+                schema=openapi.Schema(type=openapi.TYPE_OBJECT),
+            ),
+            400: openapi.Response(
+                description='Bad request',
+                schema=openapi.Schema(type=openapi.TYPE_OBJECT),
+            ),
+        },
+    )
+    def post(self, request):
+        username = request.data.get('username')
+        email = request.data.get('email')
+        password = request.data.get('password')
+
+        if not username or not email or not password:
+            return Response({'error': 'Username, email, and password are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = People.objects.create(
+            username=username,
+            email=email,
+            password=password,
+        )
+
+        return Response({'message': 'User added successfully'}, status=status.HTTP_201_CREATED)
+
 def add(request):
     if request.method == "POST":
         username = request.POST.get('username')
@@ -305,6 +493,7 @@ def update(request, id):
         pop.save()
         return redirect('home')
     return redirect(request, 'core.html')
+
 @permission_classes([])
 class UpdatePeople(APIView):
     def put(self, request):
@@ -321,6 +510,63 @@ class UpdatePeople(APIView):
             return Response(serializer.data)
               
         return Response(serializer.errors)
+
+class UpdatePeople(APIView):
+    permission_classes = []
+
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'email': openapi.Schema(type=openapi.TYPE_STRING, description='The email address of the person to update.'),
+                # Add other properties here
+            },
+            required=['email']
+        ),
+        responses={
+            200: openapi.Response(
+                description='Successful response',
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'id': openapi.Schema(type=openapi.TYPE_INTEGER, description='The unique identifier of the person.'),
+                        'email': openapi.Schema(type=openapi.TYPE_STRING, description='The email address of the person.'),
+                        # Add other properties here
+                    }
+                )
+            ),
+            400: openapi.Response(
+                description='Bad request',
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'error': openapi.Schema(type=openapi.TYPE_STRING, description='The error message.')
+                    }
+                )
+            ),
+            404: openapi.Response(
+                description='Person not found',
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'error': openapi.Schema(type=openapi.TYPE_STRING, description='The error message.', example='Person not found')
+                    }
+                )
+            )
+        }
+    )
+    def put(self, request):
+        email = request.data.get('email')
+        try:
+            person = People.objects.get(email=email)
+        except People.DoesNotExist:
+            return JsonResponse({'error': 'Person not found'}, status=404)
+
+        serializer = PeopleSerializer(person, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data)
+        return JsonResponse(serializer.errors, status=400)
 
 def delete(request, id):
     pop = People.objects.filter(id=id)
@@ -353,6 +599,38 @@ def aDD(request):
         return redirect('home')
     return render (request, 'post.html')
 
+class CreatePost(APIView):
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'content': openapi.Schema(type=openapi.TYPE_STRING, example="contents here!!."),
+                'author': openapi.Schema(type=openapi.TYPE_INTEGER, example=1)  # Example valid user ID
+            },
+            required=['content', 'author']
+        ),
+        responses={
+            201: "Created",
+            400: "Bad Request"
+        }
+    )
+    def post(self, request):
+        content = request.data.get('content')
+        author_id = request.data.get('author')
+
+        try:
+            author = People.objects.get(pk=author_id)
+        except People.DoesNotExist:
+            return Response({"error": f"Invalid author ID '{author_id}' - user does not exist."}, status=status.HTTP_400_BAD_REQUEST)
+
+        post_data = {'content': content, 'author': author_id}
+        serializer = PostSerializer(data=post_data)
+        
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class CustomAuthToken(ObtainAuthToken):
 

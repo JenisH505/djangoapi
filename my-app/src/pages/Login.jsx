@@ -34,7 +34,7 @@ const Login = (props) => {
         setErrorMessage('Please enter both username and password.')
         return;
       }
-      axiosInstance.post('http://127.0.0.1:8000/auth/api/login/', {
+      axiosInstance.post('http://127.0.0.1:8000/api/login/', {
         username: formData.username,
         password: formData.password, 
         location_data: formData.location_data

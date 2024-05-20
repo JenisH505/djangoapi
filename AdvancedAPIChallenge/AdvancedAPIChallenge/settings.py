@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "core",
     "rest_framework.authtoken",
-    "rest_framework_swagger",
+    # "rest_framework_swagger",
 ]
 
 
@@ -72,6 +72,7 @@ REST_FRAMEWORK = {
         'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ],
         'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
